@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registration{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.surname) }}
+        {{ form_row(form.birthday) }}
+        {{ form_row(form.password.first) }}
+        {{ form_row(form.password.second) }}
+        {{ form_row(form.termsAccepted) }}
+        {{ form_row(form.register) }}
+    {{ form_end(form) }}
+{% endblock %}

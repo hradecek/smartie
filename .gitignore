@@ -1,0 +1,15 @@
+# Symfony and framework related files
+.env
+.env.dist
+.phpunit
+.web-server-pid
+/var/
+/vendor/
+/phpunit.xml
+/node_modules/
+/public/build/
+/public/bundles/
+
+# IntelliJ IDEA
+*.iml
+/.idea

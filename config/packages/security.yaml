@@ -1,0 +1,21 @@
+security:
+    encoders:
+        Smartie\Entity\AppUser:
+            algorithm: bcrypt
+    providers:
+        mysql_provider:
+            entity:
+                class: Smartie\Entity\AppUser
+    firewalls:
+        main:
+            anonymous: true
+            provider: mysql_provider
+            user_checker: Smartie\Security\AppUserChecker
+            form_login:
+                login_path: /login
+                check_path: /login
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }

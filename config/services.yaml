@@ -1,0 +1,13 @@
+parameters:
+    locale: 'en'
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    Smartie\:
+        resource: '../src/*'
+        exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
+    Smartie\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
