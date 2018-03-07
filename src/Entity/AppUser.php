@@ -91,6 +91,13 @@ class AppUser implements AdvancedUserInterface, \Serializable
     /**
      * @var DateTime
      *
+     * @ORM\Column(type="datetime", name="last_login_at", nullable=true)
+     */
+    private $lastLoginAt;
+
+    /**
+     * @var DateTime
+     *
      * @ORM\Column(type="datetime", name="created_at")
      */
     private $createdAt;
@@ -381,6 +388,22 @@ class AppUser implements AdvancedUserInterface, \Serializable
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getLastLoginAt()
+    {
+        return $this->lastLoginAt;
+    }
+
+    /**
+     * @param DateTime $lastLoginAt
+     */
+    public function setLastLoginAt($lastLoginAt)
+    {
+        $this->lastLoginAt = $lastLoginAt;
     }
 
     /**

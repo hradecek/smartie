@@ -3,6 +3,7 @@
 namespace Smartie\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -23,7 +24,7 @@ class UniqueValidator extends ConstraintValidator
     /**
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($class, Constraint $constraint)
     {
         if (!$constraint instanceof Unique) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Unique');
@@ -44,9 +45,20 @@ class UniqueValidator extends ConstraintValidator
         }
 
         $em = $this->registry->getManagerForClass($constraint->entityClass);
-        dump($value);
-        dump($constraint->entityClass);
-        dump($em);
-        die();
+        $repository = $em->getRepository($constraint->entityClass);
+        foreach ($fields as $field) {
+            $fieldValue = $class->{$field};
+            $result = $repository->findBy([$field => $fieldValue]);
+            if (0 === count($result)) {
+                continue;
+            }
+
+            $this->context->buildViolation($constraint->message)
+                ->atPath($field)
+                ->setInvalidValue($fieldValue)
+                ->setCode(UniqueEntity::NOT_UNIQUE_ERROR)
+                ->setCause($result)
+                ->addViolation();
+        }
     }
 }

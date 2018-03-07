@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Unique(entityClass="Smartie\Entity\AppUser", fields={"username", "email"})
  */
-class CreateAppUserRequest
+class CreateAppUserRequest extends AppRequest
 {
     /**
      * @var string
@@ -59,6 +59,8 @@ class CreateAppUserRequest
      *
      * @Assert\NotBlank()
      * @Assert\Date()
+     * @Assert\LessThan("1 year")
+     * @Assert\GreaterThan("-200 years")
      */
     public $birthday;
 }

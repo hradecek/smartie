@@ -1,12 +1,21 @@
 <h1>Welcome to Smartie, {{ name }}!</h1>
 
-Thank you for creating a Smartie account.
-Your login: <strong>{{ username }}</strong>
-Auth code: <strong>{{ auth_code }}</strong>
+<p>
+    Thank you for creating a Smartie account.<br>
+    Your login: <strong>{{ username }}</strong><br>
+    Activation code: <strong>{{ code }}</strong>
+</p>
 
-Please use the following button to activate your account:
-<a href="{{ activation_link }}">Button</a>
+<p>
+    Please use the following button to activate your account and finish the registration:<br>
+    <a href="{{ url('app_user_activate', {'username': username, 'activationCode': code}) }}">Button</a><br>
+    <i>Note</i>, that activation code will be valid for next <strong>8 hours</strong>.<br>
+    You can always re-generate activation code by <a href="{{ path('app_user_login') }}">login</a>.
+</p>
 
+<p>
+In case, you did not created <a href="">Smartie</a> registration, please ignore this email.
+</p>
 --
 With best regards,
 The "Smartie" Team
