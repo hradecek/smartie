@@ -12,17 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Tutorial
 {
+    use HasTimestamps;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $rank;
 
     //-----------------------------------------------------
     // Relationships
@@ -37,7 +34,14 @@ class Tutorial
     /**
      * @var \Doctrine\Common\Collections\Collection|TutorialComment[]
      *
-     * @ORM\OneToMany(targetEntity="TutorialComment")
+     * @ORM\OneToMany(targetEntity="TutorialComment", mappedBy="tutorial")
      */
     private $comments;
+
+    /**
+     * @var TutorialCategory
+     *
+     * @ORM\ManyToOne(targetEntity="TutorialCategory", inversedBy="tutorials")
+     */
+    private $category;
 }

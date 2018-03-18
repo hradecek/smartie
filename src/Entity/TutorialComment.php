@@ -2,6 +2,8 @@
 
 namespace Smartie\Entity;
 
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TutorialComment
 {
+    use HasTimestamps;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -32,6 +36,7 @@ class TutorialComment
     public function __construct($text)
     {
         $this->text = $text;
+        $this->comments = new ArrayCollection();
     }
 
     //-----------------------------------------------------
@@ -57,6 +62,13 @@ class TutorialComment
      * @ORM\ManyToOne(targetEntity="AppUser", inversedBy="comments")
      */
     private $author;
+
+    /**
+     * @var Tutorial
+     *
+     * @ORM\ManyToOne(targetEntity="Tutorial", inversedBy="comments")
+     */
+    private $tutorial;
 
     //-----------------------------------------------------
     // Getters & Setters
