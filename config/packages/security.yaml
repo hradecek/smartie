@@ -8,14 +8,19 @@ security:
                 class: Smartie\Entity\AppUser
     firewalls:
         main:
+            pattern: ^/
             anonymous: true
             provider: mysql_provider
             user_checker: Smartie\Security\AppUserChecker
             form_login:
-                login_path: /login
-                check_path: /login
+                login_path: app_user_login
+                check_path: app_user_login
+                post_only: true
+                default_target_path: homepage
+                always_use_default_target_path: true
+            logout:
+                path: app_user_logout
+                handlers: [Smartie\Handler\UserLogoutHandler]
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-    access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }

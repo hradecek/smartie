@@ -4,6 +4,7 @@ namespace Smartie\Facade;
 
 use Doctrine\ORM\ORMException;
 use Smartie\Entity\AppUser;
+use Smartie\Repository\AppRoleRepository;
 use Smartie\Repository\AppUserRepository;
 use Smartie\Utils\EntityUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,11 @@ class AppUserFacade
     private $userRepository;
 
     /**
+     * @var AppRoleRepository
+     */
+    private $roleRepository;
+
+    /**
      * @var UserPasswordEncoderInterface
      */
     private $encoder;
@@ -36,15 +42,18 @@ class AppUserFacade
      *
      * @param EntityManagerInterface $entityManager
      * @param AppUserRepository $userRepository
+     * @param AppRoleRepository $roleRepository
      * @param UserPasswordEncoderInterface $encoder
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         AppUserRepository $userRepository,
+        AppRoleRepository $roleRepository,
         UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
         $this->encoder = $encoder;
     }
 
@@ -67,6 +76,10 @@ class AppUserFacade
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
 
+        $role = $this->roleRepository->findOneBy(['name' => 'ROLE_USER']);
+        $role->addUser($user);
+        $user->addRole($role);
+
         try {
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -84,7 +97,7 @@ class AppUserFacade
      * @param $username
      * @return AppUser|null
      */
-    public function activateUser($username)
+    public function enableUser($username)
     {
         $user = $this->userRepository->findOneBy(['username' => $username]);
         if (null === $user) {
@@ -92,6 +105,27 @@ class AppUserFacade
         }
 
         $user->setIsEnabled(true);
+        $user->setUpdatedAt(new \DateTime());
+
+        try {
+            $this->entityManager->merge($user);
+            $this->entityManager->flush();
+        } catch (ORMException $exception) {
+            // TODO: Throw Exception
+            return null;
+        }
+
+        return $user;
+    }
+
+    public function activate(string $username, $active = true)
+    {
+        $user = $this->userRepository->findOneBy(['username' => $username]);
+        if (null === $user) {
+            return null;
+        }
+
+        $user->setIsActive($active);
 
         try {
             $this->entityManager->merge($user);

@@ -7,10 +7,10 @@ use Smartie\Form\AppUserType;
 use Smartie\Request\CreateAppUserRequest;
 use Swift_Mailer;
 use Swift_Message;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -82,7 +82,7 @@ class AuthController extends Controller
             $recipients = $mailer->send($this->createActivationEmail($userRequest));
             if ($recipients <= 0) {
                 $this->addFlash('error', 'Unable to send a activation email. Please contact us at: ' . self::REGISTRATION_EMAIL);
-                return $this->redirectToRoute('app_user_login');
+                return $this->redirectToRoute('app_user_register');
             }
 
             $this->addFlash('info', 'Confirmation email hast been sent to ' . $userRequest->email . '. Please visit your email.');
@@ -146,7 +146,7 @@ class AuthController extends Controller
             return $this->redirectToRoute('app_user_login');
         }
 
-        $user = $this->userFacade->activateUser($username);
+        $user = $this->userFacade->enableUser($username);
         if (null === $user) {
             $this->addFlash('error', 'No user \''. $username . '\' has been registered!');
             return $this->redirectToRoute('app_user_login');
@@ -176,6 +176,26 @@ class AuthController extends Controller
         return $this->render('auth/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error
+            ]
+        );
+    }
+
+    /**
+     * Login an existing user.
+     *
+     * @param Request $request
+     * @param AuthenticationUtils $authUtils
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     */
+    public function loginPost(Request $request, AuthenticationUtils $authUtils)
+    {
+        $error = $authUtils->getLastAuthenticationError();
+        $lastUsername = $authUtils->getLastUsername();
+
+        return $this->render('auth/login.html.twig', [
+                'last_username' => $lastUsername,
+                'error' => $error
             ]
         );
     }

@@ -3,8 +3,11 @@
 namespace Smartie\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Entity representing an application user.
@@ -14,7 +17,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * @ORM\Table(name="app_user")
  * @ORM\Entity(repositoryClass="Smartie\Repository\AppUserRepository")
  */
-class AppUser implements AdvancedUserInterface, \Serializable
+class AppUser implements AdvancedUserInterface, EquatableInterface, \Serializable
 {
     /**
      * @var int
@@ -128,6 +131,23 @@ class AppUser implements AdvancedUserInterface, \Serializable
      */
     private $roles;
 
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
+
+    /**
+     * @param AppRole
+     */
+    public function addRole(AppRole $role)
+    {
+        if ($this->roles->contains($role)) {
+            return;
+        }
+
+        $this->roles->add($role);
+    }
+
     //-----------------------------------------------------
     // AdvancedUserInterface
     //-----------------------------------------------------
@@ -136,7 +156,7 @@ class AppUser implements AdvancedUserInterface, \Serializable
      */
     public function getRoles()
     {
-        return $this->roles;
+        return $this->roles->map(function (AppRole $role) { return $role->getName(); })->toArray();
     }
 
     /**
@@ -186,6 +206,33 @@ class AppUser implements AdvancedUserInterface, \Serializable
     }
 
     //-----------------------------------------------------
+    // Equatable
+    //-----------------------------------------------------
+    /**
+     * {@inheritdoc}
+     */
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof AppUser) {
+            return false;
+        }
+
+        if ($user->username !== $this->username) {
+            return false;
+        }
+
+        if ($user->email !== $this->email) {
+            return false;
+        }
+
+        if ($user->password !== $user->password) {
+            return false;
+        }
+
+        return true;
+    }
+
+    //-----------------------------------------------------
     // Serializable
     //-----------------------------------------------------
     /**
@@ -195,8 +242,10 @@ class AppUser implements AdvancedUserInterface, \Serializable
     {
         return serialize([
             $this->id,
+            $this->email,
             $this->username,
-            $this->password
+            $this->password,
+            $this->roles
         ]);
     }
 
@@ -207,8 +256,11 @@ class AppUser implements AdvancedUserInterface, \Serializable
     {
         list (
             $this->id,
+            $this->email,
             $this->username,
-            $this->password) = unserialize($serialized);
+            $this->password,
+            $this->roles
+            ) = unserialize($serialized);
     }
 
     //-----------------------------------------------------
@@ -404,13 +456,5 @@ class AppUser implements AdvancedUserInterface, \Serializable
     public function setLastLoginAt($lastLoginAt)
     {
         $this->lastLoginAt = $lastLoginAt;
-    }
-
-    /**
-     * @param AppRole[]|\Doctrine\Common\Collections\Collection $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
     }
 }

@@ -1,1 +1,2 @@
-# No routes defined here
+app_user_logout:
+    path: /user/logout

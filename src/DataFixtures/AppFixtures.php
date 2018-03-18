@@ -37,14 +37,15 @@ class AppFixtures extends Fixture
         $user->setUsername('user');
         $user->setEmail('user@gmail.com');
         $user->setBirthday(date_create("1990-01-01"));
-        $user->setCreatedAt(new DateTime());
-        $user->setUpdatedAt(new DateTime());
         $user->setPassword($this->encoder->encodePassword($user, 'user123#'));
         $user->setName('user');
         $user->setSurname('userowich');
-        $user->setIsEnabled(true);
-        $user->setIsActive(true);
+        $user->setIsEnabled(false);
+        $user->setIsActive(false);
         $user->setIsLocked(false);
+        $now = new \DateTime();
+        $user->setCreatedAt($now);
+        $user->setUpdatedAt($now);
 
         $manager->persist($user);
         $manager->flush();
