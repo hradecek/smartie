@@ -112,6 +112,15 @@ class AppUser implements AdvancedUserInterface, EquatableInterface, \Serializabl
      */
     private $updatedAt;
 
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+    }
+
     //-----------------------------------------------------
     // Relationships
     //-----------------------------------------------------
@@ -131,11 +140,6 @@ class AppUser implements AdvancedUserInterface, EquatableInterface, \Serializabl
      */
     private $roles;
 
-    public function __construct()
-    {
-        $this->roles = new ArrayCollection();
-    }
-
     /**
      * @param AppRole
      */
@@ -146,6 +150,18 @@ class AppUser implements AdvancedUserInterface, EquatableInterface, \Serializabl
         }
 
         $this->roles->add($role);
+    }
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection|TutorialComment[]
+     *
+     * @ORM\OneToMany(targetEntity="TutorialComment", mappedBy="author")
+     */
+    private $comments;
+
+    public function addComment(TutorialComment $comment)
+    {
+        $this->comments->add($comment);
     }
 
     //-----------------------------------------------------
@@ -213,21 +229,21 @@ class AppUser implements AdvancedUserInterface, EquatableInterface, \Serializabl
      */
     public function isEqualTo(UserInterface $user)
     {
-        if (!$user instanceof AppUser) {
-            return false;
-        }
+        // if (!$user instanceof AppUser) {
+        //     return false;
+        // }
 
-        if ($user->username !== $this->username) {
-            return false;
-        }
+        // if ($user->username !== $this->username) {
+        //     return false;
+        // }
 
-        if ($user->email !== $this->email) {
-            return false;
-        }
+        // if ($user->email !== $this->email) {
+        //     return false;
+        // }
 
-        if ($user->password !== $user->password) {
-            return false;
-        }
+        // if ($user->password !== $user->password) {
+        //     return false;
+        // }
 
         return true;
     }

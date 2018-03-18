@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * @author Ivo Hradek <ivohradek@gmail.com>
+ *
  * @method AppRole|null find($id, $lockMode = null, $lockVersion = null)
  * @method AppRole|null findOneBy(array $criteria, array $orderBy = null)
  * @method AppRole[]    findAll()
